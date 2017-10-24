@@ -1,0 +1,18 @@
+{
+  "name": "cs-server-api-doc",
+  "version": "1.0.0",
+  "description": "Sinosafe client service platform api doc",
+  "private": true,
+  "main": "index.js",
+  "directories": {
+    "doc": "doc"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Sinosafe",
+  "license": "ISC",
+  "devDependencies": {
+    "aglio": "^2.3.0"
+  }
+}

@@ -1,0 +1,919 @@
+FORMAT: 1A9
+HOST: /com-sinosafe-auto
+
+# 华安保险车险接口
+华安保险车险Restful接口
+
+# Data Structures
+
+## Headers (object)
++ seq : 1 (number, required) - 外部请求序列码
++ token: xxxx (string, required) - token
+
+## RspFormat (object)
++ code : 0 (number,required) - 返回信息代码
++ message : 成功 (string,required) - 返回信息
+
+## CarInfo (object)
++ licenseNo : 闽A1P883 (string, required) - 车牌号
++ frameNo : LKHCB1AG45AY03347 (string, required) - 车架号
++ engineNo : B2190283 (string, required) - 发动机号
++ modelName : 丰田 (string) - 车型名称
++ registerDate : 1493913600 (number) - 初登日期
++ companyCode : 440100 (string) - 机构代码
++ riskCode : 0301 (string) - 产品编号
+
+## Owner (object)
++ carOwner : 马晕晕 (string, required) - 行驶证车主
++ identifyType : 01 (string) - 车主证件类型,默认身份证
+    - Default : 01
++ identifyNumber : 340603199207010013 (string, required) - 车主证件号码
++ sex : 01 (string) - 车主性别
++ age : 22 (number) - 车主年龄
++ mobilePhone : 15507584826 (string) - 联系电话
+
+## Vehicle (object)
++ licenseNo : 粤A5B68P (string, required) - 车牌号码
++ engineNo : ASDF23322 (string, required) - 发动机号
++ seatCount : 5 (string, optional) - 座位数，当查出来的车型座位数都与实际不匹配的时候才需要
++ frameNo : LHGGD38445202KJE1 (string, required) - 车架号/VIN码
++ modelCode : KMD1123GZF (string, required) - 厂牌车型代码
++ modelName : 丰田GTM7251GE轿车 (string, required) - 厂牌车型名称
++ registerDate : 1493913600 (number, required) - 初次登记日期
++ useNatureShow: 02(string)  - 使用性质,默认非营运 02
+    - Default: 02
++ attachNature: 01 (string) - 所属性质,默认个人 01
+    - Default: 01
++ carKindCode: 100 (string) - 机动车种类,默认客车 100
+    - Default: 100
++ licenseTypeCode : 02 (string) - 号牌种类
++ hkFlag : 0 (string) - 是否粤港两地,否：0、是：1
+    - Default: 0
++ changeRegionDate : 1493913600 (number) - 转籍时间年月,天津特有
++ chgOwnerFlag : 0 (number) - 过户车标志
+    - Default: 0
++ transferDate: 1493913600 (number, optional) - 转移登记日期,过户车时必传
++ loanVehicleFlag : 0  (string) - 是否按揭车,默认否：0、是：1
+    - Default: 0
++ settleAddressCode: 广东省深圳市香梅路水榭花都 (string) - 车辆落户地址
++ certificateDate : 1495900800 (number) - 发证日期(北京)
++ certificateNo : 123243 (string) - 车辆来历凭证编号（北京）
++ certificateType : 01 (string) - 车辆来历凭证种类（北京）
+
+## Applicant (object)
++ applicantName : 马晕晕 (string) - 投保人姓名
++ identifyType : 01 (string) - 投保人证件类型
+    - Default: 01
++ identifyNumber : 340603199207010013 (string) - 投保人证件号码
++ sex : 01 (string) - 投保人性别
++ age : 22 (number) - 投保人年龄
++ address : 中国广东省 (string) - 投保人地址
++ postCode : 518000 (string) - 投保人邮编
++ phone : 15507584826 (string) - 投保人联系人电话
++ email : `5345345@qq.com` (string) - 投保人邮箱
+
+## Insured (object)
++ insuredName : 马晕晕 (string) - 被保险人姓名
++ identifyType : 01 (string) - 被保人证件类型
+    - Default: 01
++ identifyNumber : 340603199207010013 (string) - 被保人证件号码
++ sex : 01 (number) - 被保人性别
++ age : 22 (number) - 被保人年龄
++ address : 中国广东省 (string) - 被保险人地址
++ postCode : 518000 (string) - 被保险人邮编
++ phone : 15507584826 (string) - 被保险人电话
++ email : `5345345@qq.com` (string) - 被保人邮箱
+
+## PolicyState (object)
++ proceId: 59463728a598282cf45dfde3 (string, required) - 业务查询码
++ proposalNo:0020101030220170000111  (string, required) - 投保单号
++ applicantName : 马晕晕 (string) - 投保人姓名
++ premium:222.00 (number, required) - 保费
++ proposalDate:1495900800 (number, required) - 投保日期
++ startDate:1495900800 (number, required) - 保险起期
++ endDate:1495900800 (number, required) - 保险止期
++ licenseNo : 闽A1P883 (string, required) - 车牌号
++ frameNo : LKHCB1AG45AY03347 (string, required) - 车架号
++ status : 3 (string, required) - 状态码 
++ riskCode : 0302 (string, required) - 险种代码
++ picFlag: 2 (string, optional) - 影像上传标志 0未上传 1已上传 2需验车未上传
++ issueMessage: 需验车，请上传影像 (string, optional) - 核保提示信息
+
+
+# Group 车险投保流程
+
+## 标的信息确认 [/setup-vehicle]
+
+###  标的信息确认[POST]
++ Request (application/json; charset=UTF-8)
+    + Headers
+
+            Seq : 1
+            Token : xxxx
+            Cha-Code: 0101100083
+    + Attributes (Vehicle)
+        + proceId:59463728a598282cf45dfde3 (string) - 业务查询码
+
+
++ Response 200 (application/json; charset=UTF-8)
+    + Headers
+
+            Access-Control-Expose-Headers : Seq
+            Seq : 1
+    + Attributes (RspFormat)
+        + data (object)
+            + proceId:59463728a598282cf45dfde3 (string) - 业务查询码
+
+## 车主信息确认 [/setup-owner]
+        
+###  车主信息确认[POST]
++ Request (application/json; charset=UTF-8)
+    + Headers
+
+            Seq : 1
+            Token : xxxx
+            Cha-Code: 0101100083
+    + Attributes
+        + proceId:59463728a598282cf45dfde3 (string) - 业务查询码
+        + owner (Owner)
+        + applicant (Applicant)
+        + insured (Insured)
+
++ Response 200 (application/json; charset=UTF-8)
+    + Headers
+
+            Access-Control-Expose-Headers : Seq
+            Seq : 1
+    + Attributes (RspFormat)
+        + data (object)
+            + proceId: 59463728a598282cf45dfde3 (string) - 业务查询码
+
+## 险别信息确认 [/setup-risk]
+
+###  险别信息确认(保费计算)[POST]
++ Request (application/json; charset=UTF-8)
+    + Headers
+
+            Seq : 1
+            Token : xxxx
+            Cha-Code: 0101100083
+    + Attributes
+        + proceId (string) - 业务查询码
+        + base (object)
+            + backUrlPolicyList (array, fixed)
+                + (object)
+                    + backUrl: https://www.baidu.com (string, optional) - 客户支付成功回调通知给渠道的地址
+            + backUrlUnderwriteList (array, fixed)
+                + (object)
+                    + backUrl: https://www.baidu.com (string, optional) - 人工核保回调通知给渠道的地址 
+        + riskList (array, fixed)
+            + (object, optional)
+                + riskCode: 0302 (string, required) - 险种代码
+                + startDate: 1495900800  (number, optional) - 保险起期
+                + effectFlag: 0 (number, optional) - 即时生效,默认非即时生效
+                    - Default : 0
+                + answer: A (string, optional) - 转保答案
+                + applySumDiscount:1 (number, optional) - 申请折扣,第二次保费计算用
+                + quotationNo: Q020101030220170000650 (string,optional) - 核心返回的报价单号，折扣申请的时候或遇到转保问题时需要
+                + demandNo: 01HAIC130017001502151766595543 (string, optional) - 查询码,转保时返回
+                + answer: 1 (string, optional) - 转保答案，转保必填
+                + question:33加18等于? (string, optional) -转保问题,转保时返回
+                + electronicInd: 0 (number, optional) - 电子保单标志,深圳北京才有用
+                    - Default : 0
+                + recordCode: 334534545  (string, optional) - 备案代码, 第三方业务必传
+                + coverageList (array, fixed)
+                    + (object)
+                        + kindCode: 0302 (string, required) - 险别代码
+                        + sumInsured:222.22 (number, optional) - 保险金额/赔偿限额(元）,责任类险种需要
+                        + relatedInd: 1 (number, optional) - 是否不计免赔,0 免赔,1 不计免赔
+                            - Default : 1
+                        + deductible:1000 (number, optional) - 车损绝对免赔额,车损险险种在非不计免赔的时候使用需要，可选金额(0,300,500,1000,2000)单位：元
+                        + valueType:0 (number, optional) - 玻璃类型
+                        + rate:20 (number, optional) - 费率 %
+
++ Response 200 (application/json; charset=UTF-8)
+    + Headers
+
+            Access-Control-Expose-Headers : Seq
+            Seq : 1
+    + Attributes (RspFormat)
+        + data (object)
+          + proceId: 59463728a598282cf45dfde3 (string) - 业务查询码
+          + tax (object)
+              + currentTax: 0302 (number) - 当年应缴
+              + previousPay: 1493913600  (number) - 往年补缴
+              + lateFee: 1525449599 (number) - 滞纳金
+              + sumPayTax: 1525449599 (number) - 税金合计
+              + taxRelifFlag: 01 (string) - 减免税标志 01拒缴,02缴税,03完税,04减税,05免税
+
+          + riskList (array, fixed)
+              + (object)
+                  + riskCode: 0302 (string,required) - 险种代码
+                  + startDate: 1493913600  (number,required) - 保险起期
+                  + endDate: 1525449599 (number,required) - 保险止期
+                  + applySumDiscount: 0.62 (string, optional) - 总折扣
+                  + sumGrossPremium: 22220.4 (number, optional) - 总保费
+                  + quotationNo: Q020101030220170000650 (string,optional) - 核心返回的报价单号，折扣申请的时候或遇到转保问题时需要
+                  + demandNo: 01HAIC130017001502151766595543 (string, optional) - 查询码,转保时返回
+                  + question: 33加18等于? (string, optional) - 转保问题,转保时返回
+                  + coverageList (array, fixed)
+                      + (object)
+                          + kindCode: 0302 (string, required) - 险别代码
+                          + sumInsured: 222.00 (number, required) - 保险金额/赔偿限额(元）
+                          + relatedInd: 1 (number, optional) - 是否不计免赔,0 免赔,1 不计免赔
+                          + nonDeductiblePremium: 222.00 (number, required) - 不计免赔保费
+                          + rate: 9 (number) - 费率（%）
+                          + basePremium: 222.00 (number) - 基本保费(元)
+                          + preDiscountPremium: 222.00 (number) - 折前保费(元)
+                          + grossPremium: 222.00 (number) - 应缴保费(元)
+                          + deductible: 222.00 (number) - 车损绝对免赔额
+                          + benchmarkPremium: 222 (number) - 基准保费    
+
+## 业务信息查询（用于草稿箱） [/query-historyinfo]
+
+###  业务信息查询[POST]
++ Request (application/json; charset=UTF-8)
+    + Headers
+
+            Seq : 1
+            Token : xxxx
+            Cha-Code: 0101100083
+    + Attributes
+        + proceIdList (array, fixed)
+            + (object)
+                + proceId: 59463728a598282cf45dfde3 (string, required) - 业务查询码，查询确认过的结点信息
+            
++ Response 200 (application/json; charset=UTF-8)
+   + Headers
+
+            Access-Control-Expose-Headers : Seq
+            Seq : 1
+   + Attributes (RspFormat)
+       + data (array, fixed)
+           + (object)
+              + proceId: 59463728a598282cf45dfde3 (string, required) - 业务查询码
+              + vehicle (Vehicle) - 标的信息
+              + owner (Owner) - 车主信息
+              + applicant (Applicant) - 投保人信息
+              + insured (Insured) - 被保人信息
+              + riskList (array, fixed)
+                  + (object, optional)
+                      + riskCode: 0302 (string, required) - 险种代码
+                      + sumGrossPremium: 22220.4 (number, optional) - 总保费
+                      + startDate: 1495900800  (number, optional) - 保险起期
+                      + effectFlag: 0 (number, optional) - 即时生效,默认非即时生效
+                          - Default : 0
+                      + applySumDiscount: 0.715 (number, optional) - 申请折扣,第二次保费计算用
+                      + coverageList (array, fixed)
+                          + (object)
+                              + kindCode: 0302 (string, required) - 险别代码
+                              + sumInsured: 500000 (number, optional) - 保险金额/赔偿限额(元）,责任类险种需要
+                              + relatedInd: 1 (number, optional) - 不计免赔
+                                  - Default : 1
+                              + deductible: 0 (number, optional) - 车损绝对免赔额
+                              + valueType: 1 (number, optional) - 玻璃类型,投保玻璃才需要,默认根据车架号判断
+                                  - Default : 1
+
+# Group 车险承保基本接口  
+
+## 车辆信息查询 [/query-carmodel]
+
+### 车型查询 [POST]
++ Request (application/json; charset=UTF-8)
+    + Headers
+
+            Seq : 1
+            Token : xxxx
+            Cha-Code: 0101100083
+    + Attributes
+        + modelCode : B2190283 (string, optional) - 车型代码,如果此项存在，车型名称无效
+        + modelName : 丰田GTM7251GE轿车 (string, required) - 车型名称
+        + frameNo : LJDLAA395E0415186 (string, optional) - 车架号
+        + licenseNo : 闽A1P883 (string, optional) - 车牌号
+        + engineNo : B2190283 (string, optional) - 发动机号
+        + registerDate : 1493913600 (number, optional) - 初登日期
+        + companyCode : 0102 (string) - 机构代码
+        + riskCode : 0301 (string) - 产品编号
+
++ Response 200 (application/json; charset=UTF-8)
+    + Headers
+
+            Access-Control-Expose-Headers : Seq
+            Seq : 1
+    + Attributes (RspFormat)
+        + data (array,fixed)
+            + (object)
+                + modelCode : B2190283 (string, required) - 车型代码
+                + modelName : 丰田GTM7251GE轿车 (string, required) - 车型名称
+                + ciModelCode : BGQGYMUC0014 (string) - 行业车型编码
+                + vehicleClass : 轿车类 (string) - 车型分类
+                + seatCount : 5 (number, required) - 座位数
+                + exhaustScale : 2.49 (number, required) - 排量
+                + completeKerbMass : 1490 (number) - 整备质量
+                + carYear : 201401 (string) - 车辆年份
+                + purchasePrice : 302300 (number) - 新车购置价
+                + remark : CVT 旗舰版 混合动力 国Ⅴ (string) - 描述
+
+
+## 折旧计算 [/query-depreciation]
+
+###  折旧计算[POST]
++ Request (application/json; charset=UTF-8)
+    + Headers
+
+            Seq : 1
+            Token : xxxx
+            Cha-Code: 0101100083
+    + Attributes
+        + riskCode : 0302 (string) - 产品编码
+            - Default : 0302
+        + startDate : 1495972349 (number) - 保险起期
+        + registerDate : 1493913600 (number, required) - 初次登记日期
+        + purchasePrice : 191000 (number, required) - 新车购置价
+        + attachNature : 01 (string) - 所属性质
+            - Default : 01
+        + carKindCode : 100  (string) - 机动车种类 - 100客车,200货车
+            - Default : 100
+        + useNatureShow : 01 (string) - 使用性质
+            - Default : 01
+        + seatCount : 5 (number, optional) - 非货车时必录
+        + modelCode : KMD1101GZF (string, required) - 车型代码    
+        + modelName : 丰田GTM7251GE轿车 (string, required) - 车型名称  
+
++ Response 200 (application/json; charset=UTF-8)
+    + Headers
+
+            Access-Control-Expose-Headers : Seq
+            Seq : 1
+            
+    + Attributes (RspFormat)
+        + data (object)
+           + actualValue : 106619.08 (number, required) - 折旧后价值
+           + depreciationMonths : 12 (number, required) - 折旧月份
+           + depreciationRate : 0.009 (number) - 折旧率
+
+
+
+## 保费计算接口 [/query-premium]
+
+###  保费计算[POST]
++ Request (application/json; charset=UTF-8)
+    + Headers
+
+            Seq : 1
+            Token : xxxx
+            Cha-Code: 0101100083
+    + Attributes
+        + base (object)
+            + operatorCode : 131139230 (string, optional) - 员工编码
+            + salesmanCode : 131139230 (string, optional) - 业务员
+            + intermediaryCode : 3101075454 (string, optional) - 渠道代码
+            + intermediaryName : 携程 (string, optional) - 渠道代码名称
+            + backUrlPolicyList (array, fixed)
+                + (object)
+                    + backUrl: https://www.baidu.com (string, optional) - 客户支付成功回调通知给渠道的地址
+            + backUrlUnderwriteList (array, fixed)
+                + (object)
+                    + backUrl: https://www.baidu.com (string, optional) - 人工核保回调通知给渠道的地址
+        + vehicle (Vehicle)
+        + owner (Owner)
+        + applicant (Applicant)
+        + insured (Insured)
+        + riskList (array, fixed)
+            + (object)
+                + riskCode: 0302 (string, required) - 险种代码
+                + startDate: 1495900800  (number, optional) - 保险起期
+                + effectFlag: 0 (number, optional) - 即时生效
+                    - Default : 0
+                + demandNo: Q020101030220170000650  (string, optional) - 查询码,转保才需要
+                + answer: A (string, optional) - 转保答案，转保必填
+                + quotationNo: 01HAIC130017001502151766595543 (string,optional) - 核心返回的报价单号，折扣申请或者转保的时候需要
+                + applySumDiscount: 0.854 (number, optional) - 申请折扣
+                + electronicInd: 0 (number, optional) - 电子保单标志,深圳北京才有用
+                    - Default : 0
+                + recordCode: 334534545  (string, optional) - 备案代码, 第三方业务必传
+                + coverageList (array, fixed)
+                    + (object)
+                        + kindCode: 0302 (string, required) - 险别代码
+                        + sumInsured:222.22 (number, optional) - 保险金额/赔偿限额(元）,责任类险种需要
+                        + relatedInd: 1 (number, optional) - 是否不计免赔,0 免赔,1 不计免赔
+                            - Default : 1
+                        + deductible:1000 (number, optional) - 车损绝对免赔额,车损险险种在非不计免赔的时候使用需要，可选金额(0,300,500,1000,2000)单位：元
+                        + valueType:0 (number, optional) - 玻璃类型
+                        + rate:20 (number, optional) - 费率 %
+
++ Response 200 (application/json; charset=UTF-8)
+    + Headers
+
+            Access-Control-Expose-Headers : Seq
+            Seq : 1
+    + Attributes (RspFormat)
+        + data (object)
+            + proceId: 59463728a598282cf45dfde3 (string, required) - 业务查询码
+            + tax (object)
+                + currentTax: 0302 (number) - 当年应缴
+                + previousPay: 1493913600  (number) - 往年补缴
+                + lateFee: 1525449599 (number) - 滞纳金
+                + sumPayTax: 1525449599 (number) - 税金合计
+                + taxRelifFlag (string) - 01拒缴,02缴税,03完税,04减税,05免税
+            + riskList (array, fixed)
+                + (object)
+                    + applySumDiscount: 0.62 (string, optional) - 总折扣
+                    + sumGrossPremium: 22220.4 (number, optional) - 总保费
+                    + riskCode: 0302 (string,required) - 险种代码
+                    + quotationNo: Q020101030220170000650 (string,required) - 核心返回的报价单号，折扣申请的时候或遇到转保问题时需要
+                    + demandNo: 01HAIC130017001502151766595543 (string, optional) - 平台查询码,转保时返回
+                    + question: 33加18等于? (string, optional) - 转保问题,转保时返回
+                    + startDate: 1495900800  (number,required) - 保险起期
+                    + endDate: 1527436799 (number,required) - 保险止期 
+                    + coverageList (array, fixed)
+                        + (object)
+                            + kindCode: 0302 (string, required) - 险别代码
+                            + sumInsured: 222.00 (number, required) - 保险金额/赔偿限额(元）
+                            + relatedInd: 1 (number, optional) - 是否不计免赔,0 免赔,1 不计免赔
+                            + nonDeductiblePremium: 222.00 (number, optional) - 不计免赔保费
+                            + rate: 9 (number, optional) - 费率（%）
+                            + basePremium: 222.00 (number, required) - 基本保费(元)
+                            + preDiscountPremium: 222.00 (number, required) - 折前保费(元)
+                            + grossPremium: 222.00 (number, required) - 应缴保费(元)
+                            + deductible: 222.00 (number, optional) - 车损绝对免赔额
+                            + benchmarkPremium: 222 (number, required) - 基准保费
+
+## 提交核保 [/query-underwrite]
+
+### 车险提交核保[POST]
++ Request (application/json; charset=UTF-8)
+    + Headers
+        
+            Seq : 1
+            Token : xxxx
+            Cha-Code: 0101100083
+    + Attributes
+        + proceId: 59463728a598282cf45dfde3 (string) - 业务查询码
+        + proposalNoList (array, fixed)
+            + (object)
+                + proposalNo: 0040201030220170000057 (string, optional) - 投保单号,二次提核的时候需要
+                + riskCode: 0302 (string, optional) - 险种代码,二次提核的时候需要
+        + applicant (object) 
+            + invtype: 0 (string, optional) - 发票类型,`0-普通发票；1-专用发票；2-电子发票`
+                + Default: 0
+            + taxType: 01 (string, optional) - 纳税人类型,`01-一般纳税人;02-小规模纳税人;03-个人`
+                + Default: 01
+
++ Response 200 (application/json; charset=UTF-8)
+    + Headers
+
+            Access-Control-Expose-Headers : Seq
+            Seq : 1
+    + Attributes (RspFormat)
+        + data (object)
+            + proposalInfos (array, fixed)
+                + (object)
+                    + proposalNo: 0040201030220170000057 (string, required) - 投保单号
+                    + riskCode: 0302 (string, required) - 产品代码
+                    + underWriteInd: 9 (string, optional) - 核保标志 1核保通过 2下发修改 3自动核保  9待核保 6承保确认 
+                    + picFlag: 2 (string, optional) - 影像上传标志 0未上传 1已上传 2需验车未上传
+                    + ilogInfos (array, fixed)
+                        + (object)
+                            + ruleMessage (string, optional) -Ilog返回规则信息详情
+                            + argument (string, required) - Ilog返回规则状态
+                            + ruleId (string, optional) - Ilog返回规则Id
+
+## 见费出单 [/query-create-policy]
+
+###  见费出单[POST]
++ Request (application/json; charset=UTF-8)
+    + Headers
+    
+            Seq : 1
+            Token : xxxx
+            Cha-Code: 0101100083
+    + Attributes
+        + payAppNo:30465603645687876 (string, required) - 外部支付申请号，确保唯一
+        + insuMidno: HA_T001A (string, required) - 外部识别号`外部用于识别华安的`
+        + appinfoList (array, fixed)
+            + (object)
+                + proposalNo:0010301030120170000162 (string, required) - 投保单号
+
++ Response 200 (application/json; charset=UTF-8)
+    + Headers
+
+            Access-Control-Expose-Headers : Seq
+            Seq : 1
+    + Attributes (RspFormat)
+        + data (array, fixed)
+            + (object)
+                + proposalNo:0010301030120170000162 (string) - 投保单号
+                + policyNo:6010301030120170000030 (string) - 保单号
+                + resCode:1 (string) - 单条结果状态码
+                + resMsg:成功 (string) - 单条结果信息
+                
+## 支付申请 [/query-payment]
+
+###  支付申请[POST]
++ Request (application/json; charset=UTF-8)
+    + Headers
+
+            Seq : 1
+            Token : xxxx
+            Cha-Code: 0101100083
+    + Attributes
+        + telVerifyCode:225565 (string) - 北京短信验证码`北京必传`
+        + backURL:http://www.baidu.com (string, optional) - 支付成功后展示页面跳转地址
+        + proceId:59463728a598282cf45dfde3 (string, optional) - 报价单号，与appinfoList两者必传其一
+        + appinfoList (array, fixed)
+            + (object)
+                + proposalNo:0010301030120170000162 (string, required) - 投保单号 
+               
+
++ Response 200 (application/json; charset=UTF-8)
+    + Headers
+
+            Access-Control-Expose-Headers : Seq
+            Seq : 1
+    + Attributes (RspFormat)
+        + data (object)
+            + payNo:2343433 (string) - 支付申请号
+
+## 影像上传 [/upload-image]
+
+###  影像上传[POST]
++ Request (application/json; charset=UTF-8)
+    + Headers
+    
+            Seq : 1
+            Token : xxxx
+            Cha-Code: 0101100083
+    + Attributes
+        + operCode: 131139230  (string, optional) - 员工编号
+        + proceId: 59463728a598282cf45dfde3 (string, required) - 业务查询码
+        + picdtl: S001_00101 (string, required) - 分类编码（细分）
+        + funCode: S001_001 (string, optional) - 功能编号,默认S001_001
+            - Default: S001_001
+        + orgCode: 0104 (string, optional) - 机构代码
+        + picName: 201706223545456469568.jpg - 图片名称,唯一，注意只支持jpg格式,并加后缀
+
+
++ Response 200 (application/json; charset=UTF-8)
+    + Attributes (RspFormat)
+
+## 通知服务器影像上传完成 [/upload-image-notify]
+
+###  通知服务器影像上传完成[POST]
+
++ Request (application/json; charset=UTF-8)
+    + Headers
+    
+            Seq : 1
+            Token : xxxx
+            Cha-Code: 0101100083
+    + Attributes
+        + proceId: 59463728a598282cf45dfde3 (string, required) - 业务查询码
+
++ Response 200 (application/json; charset=UTF-8)
+    + Attributes (RspFormat)
+
+
+## 保单配送 [/send-policy]
+
+### 保单配送[POST]
++ Request (application/json; charset=UTF-8)
+    + Headers
+    
+            Seq : 1
+            Token : xxxx
+            Cha-Code: 0101100083
+    + Attributes
+        + orderNo: xiecheng1496455159S001_01 (string, required) - 渠道代码加时间戳加其它标识，做到唯一
+        + receiverName: 马晕晕 (string, optional) - 收件人姓名,不填默认投保人
+        + receiverTel: 15507584825 (string, required) - 联系人电话
+        + certificateType:0  (string, optional) - 发票形式,默认普通发票 0-普通发票；1-专用发票；2-电子发票
+        + email: 15507584825@qq.com (string, optional) - 电子邮箱
+        + address: 香梅路水榭花都10栋27E (string, required) - 详细地址
+        + receiverProvince:140000 (string, optional) - 配送地址省份代码
+        + receiverCity:140100 (string, optional) - 配送地址城市代码
+        + receiverDistrict:140105 (string, optional) - 配送地址县区代码
+        + riskList (array, fixed)
+            + (object, optional)
+                + riskCode: 0302 (string, required) - 险种代码
+                + proposalNo:0020101030220170000111  (string, required) - 投保单号
+        
++ Response 200 (application/json; charset=UTF-8)
+    + Headers
+
+            Access-Control-Expose-Headers : Seq
+            Seq : 1
+    + Attributes (RspFormat)
+
+
+## 门店自取 [/self-policy]
+
+### 门店自取[POST]
++ Request (application/json; charset=UTF-8)
+    + Headers
+    
+            Seq : 1
+            Token : xxxx
+            Cha-Code: 0101100083
+    + Attributes
+        + riskList (array, fixed)
+            + (object, optional)
+                + riskCode: 0302 (string, required) - 险种代码
+                + proposalNo:0020101030220170000111  (string, required) - 投保单号
+        
++ Response 200 (application/json; charset=UTF-8)
+    + Headers
+
+            Access-Control-Expose-Headers : Seq
+            Seq : 1
+    + Attributes (RspFormat)
+
+
+## 配送查询接口 [/send-policy-check]
+
+###  配送查询[POST]
++ Request (application/json; charset=UTF-8)
+    + Headers
+    
+            Seq : 1
+            Token : xxxx
+            Cha-Code: 0101100083
+    + Attributes
+        + proposalNo: 0310101030220170000078 (string, optional) - 投保单号
+
+
++ Response 200 (application/json; charset=UTF-8)
+    + Headers
+
+            Access-Control-Expose-Headers : Seq
+            Seq : 1
+    + Attributes (RspFormat)
+        + receiverName: 马晕晕 (string, optional) - 收件人姓名
+        + receiverTel: 15507584825 (string, required) - 联系人电话
+        + email: 15507584825@qq.com (string, optional) - 电子邮箱
+        + address: 香梅路水榭花都10栋27E (string, required) - 详细地址
+        + receiverProvince:140000 (string, optional) - 配送地址省份代码
+        + receiverCity:140100 (string, optional) - 配送地址城市代码
+        + receiverDistrict:140105 (string, optional) - 配送地址县区代码
+        + sendStatus (string, required) - 配送状态：0未填写 1已填写未配送 2正在配送 3配送完成
+
+
+# Group 车险承保辅助接口  
+
+## 已生成保单查询（用于已支付保单查询、续保查询） [/query-policies]
+
+###  已生成保单查询[POST]
++ Request (application/json; charset=UTF-8)
+    + Headers
+    
+            Seq : 1
+            Token : xxxx
+            Cha-Code: 0101100083
+    + Attributes
+        + proceIdList (array, fixed)
+            + (object)
+                + proceId: 59463728a598282cf45dfde3 (string, required) - 业务查询码，proceIdList存在的时候，优先按此方式查询
+        + keyWord: 关键字 (string, optional) - 按关键字查询。可以是投被保人、车牌(1个中文+5位数字)、车架号(17位字符)
+
++ Response 200 (application/json; charset=UTF-8)
+    + Headers
+
+            Access-Control-Expose-Headers : Seq
+            Seq : 1
+    + Attributes (RspFormat)
+        + data (array, fixed)
+            + (object)
+                + proceId: 59463728a598282cf45dfde3 (string, required) - 业务查询码
+                + proposalNo:0020101030220170000111  (string, required) - 投保单号
+                + applicantName : 马晕晕 (string) - 投保人姓名
+                + riskCode : 0302 (string, required) - 险种代码
+                + policyNo:6020101030220170000111 (string) - 保单号
+                + premium:222.00 (number, required) - 保费
+                + proposalDate:1495900800 (number, required) - 投保日期
+                + startDate:1495900800 (number, required) - 保险起期
+                + endDate:1495900800 (number, required) - 保险止期
+                + licenseNo : 闽A1P883 (string, required) - 车牌号
+                + frameNo : LKHCB1AG45AY03347 (string, required) - 车架号
+                + sendStatus (string, required) - 配送状态：0未填写 1已填写未配送 2正在配送 3配送完成
+            
+
+## 保单信息详细查询 [/query-policy-info]
+
+### 保单信息详细查询[POST]
++ Request (application/json; charset=UTF-8)
+    + Headers
+
+            Seq : 1
+            Token : xxxx
+            Cha-Code: 0101100083
+    + Attributes
+        + proceId: 59463728a598282cf45dfde3 (string, optional) - 业务查询码，查询确认过的结点信息
+        + proposalNo: 234388438 (string, optional) - 投保单号
+        + policyNo: 234388438 (string, optional) - 保单号
+        + frameNo: LKHCB1AG45AY03347 (string, optional) - 车架号
+
++ Response 200 (application/json; charset=UTF-8)
+   + Headers
+
+            Access-Control-Expose-Headers : Seq
+            Seq : 1
+   + Attributes (RspFormat)
+       + data (object, fixed)
+            + proceId: 59463728a598282cf45dfde3 (string, required) - 业务查询码
+            + vehicle (Vehicle) - 标的信息
+            + owner (Owner) - 车主信息
+            + applicant (Applicant) - 投保人信息
+            + insured (Insured) - 被保人信息
+            + riskList (array, fixed)
+                + (object, optional)
+                    + riskCode: 0302 (string, required) - 险种代码
+                    + sumGrossPremium: 22220.4 (number, optional) - 总保费
+                    + startDate: 1495900800  (number, optional) - 保险起期
+                    + coverageList (array, fixed)
+                        + (object)
+                            + kindCode: 0302 (string, required) - 险别代码
+                            + sumPayTax: 380 (number,optional) - 车船税
+                            + sumInsured: 500000 (number, optional) - 保险金额/赔偿限额(元）,责任类险种需要
+                            + relatedInd: 1 (number, optional) - 不计免赔
+                                - Default : 1
+                            + deductible: 0 (number, optional) - 车损绝对免赔额
+                            + valueType: 1 (number, optional) - 玻璃类型,投保玻璃才需要,默认根据车架号判断
+                                - Default : 1
+
+
+## 订单状态查询（用于订单查询） [/query-proposal-state]
+
+###  订单状态查询[POST]
++ Request (application/json; charset=UTF-8)
+    + Headers
+    
+            Seq : 1
+            Token : xxxx
+            Cha-Code: 0101100083
+    + Attributes
+        + proceIdList (array, fixed)
+            + (object)
+                + proceId: 59463728a598282cf45dfde3 (string, required) - 业务查询码，proceIdList存在的时候，优先按此方式查询
+
++ Response 200 (application/json; charset=UTF-8)
+    + Headers
+
+            Access-Control-Expose-Headers : Seq
+            Seq : 1
+    + Attributes (RspFormat)
+        + data (object)
+            + finishList (array[PolicyState], fixed)
+            + personPassedList (array[PolicyState], fixed)
+            + autoPassedList (array[PolicyState], fixed)
+            + waitingList (array[PolicyState], fixed)
+            + refusedList (array[PolicyState], fixed)
+
+
+## 订单详细信息查询（用于未生成保单状态查询） [/query-order-info]
+
+### 订单信息查询[POST]
++ Request (application/json; charset=UTF-8)
+    + Headers
+
+            Seq : 1
+            Token : xxxx
+            Cha-Code: 0101100083
+    + Attributes
+        + proceId: 59463728a598282cf45dfde3 (string, optional) - 业务查询码，所有2个条件必传其中一个
+        + proposalNo: 234388438 (string, optional) - 投保单号
+
++ Response 200 (application/json; charset=UTF-8)
+   + Headers
+
+            Access-Control-Expose-Headers : Seq
+            Seq : 1
+   + Attributes (RspFormat)
+       + data (object, fixed)
+            + proceId: 59463728a598282cf45dfde3 (string, required) - 业务查询码
+            + picStatus: 1 (string, required) - 是否上传过影像 0,未上传 1,已上传
+            + vehicle (Vehicle) - 标的信息
+            + owner (Owner) - 车主信息
+            + applicant (Applicant) - 投保人信息
+            + insured (Insured) - 被保人信息
+            + riskList (array, fixed)
+                + (object, optional)
+                    + riskCode: 0302 (string, required) - 险种代码
+                    + sumGrossPremium: 22220.4 (number, optional) - 总保费
+                    + startDate: 1495900800  (number, optional) - 保险起期
+                    + endDate: 1495900800  (number, optional) - 保险止期
+                    + coverageList (array, fixed)
+                        + (object)
+                            + kindCode: 0302 (string, required) - 险别代码
+                            + sumPayTax: 380 (number,optional) - 车船税,交强险险别的时候才会返回
+                            + sumInsured: 500000 (number, optional) - 保险金额/赔偿限额(元）,责任类险种需要
+                            + relatedInd: 1 (number, optional) - 不计免赔
+                                - Default : 1
+                            + deductible: 0 (number, optional) - 车损绝对免赔额
+                            + issueMessage: 需验车，请上传影像 (string, optional) - 核保提示信息
+                            + valueType: 1 (number, optional) - 玻璃类型,投保玻璃才需要,默认根据车架号判断
+                                - Default : 1
+
+## 投保状态查询（用于支付前确认查询） [/query-proposal-corestate]
+
+###  投保状态查询[POST]
++ Request (application/json; charset=UTF-8)
+    + Headers
+    
+            Seq : 1
+            Token : xxxx
+            Cha-Code: 0101100083
+    + Attributes
+        + proceIdList (array, fixed)
+            + (object)
+                + proceId: 59463728a598282cf45dfde3 (string, required) - 业务查询码，proceIdList存在的时候，优先按此方式查询
+
++ Response 200 (application/json; charset=UTF-8)
+    + Headers
+
+            Access-Control-Expose-Headers : Seq
+            Seq : 1
+    + Attributes (RspFormat)
+        + data (object)
+            + finishList (array[PolicyState], fixed)
+            + personPassedList (array[PolicyState], fixed)
+            + autoPassedList (array[PolicyState], fixed)
+            + waitingList (array[PolicyState], fixed)
+            + refusedList (array[PolicyState], fixed)              
+
+## 删单接口 [/cancel-underwrite]
+
+###  删单接口(预核保)[POST]
++ Request (application/json; charset=UTF-8)
+    + Headers
+
+            Seq : 1
+            Token : xxxx
+            Cha-Code: 0101100083
+    + Attributes (array, fixed)
+        + (object)
+            + proposalNo:0102301030220170004415  (string, required) - 投保单号
+            + operatorCode:admin@sinosafe.com.cn (string, required) - 业务员工号
+
++ Response 200 (application/json; charset=UTF-8)
+    + Headers
+
+            Access-Control-Expose-Headers : Seq
+            Seq : 1
+    + Attributes (RspFormat)
+        + data (array, fixed)
+            + (object)
+                + proposalNo:0102301030220170004415 (string) - 投保单号
+                + resCode:0 (string) - 单条结果状态码
+                + resMsg:成功 (string) - 单条结果信息
+                
+## 保单号补传 [/query-policyNo]
+
+###  保单号补传(遇到异常情况重新获取保单号)[POST]
++ Request (application/json; charset=UTF-8)
+    + Headers
+
+            Seq : 1
+            Token : xxxx
+            Cha-Code: 0101100083
+    + Attributes
+        + proposalNoList (array, fixed)
+            + (object)
+                + proposalNo: 6102301030220170002084 (string, required) - 需要重新获得保单号的投保单号
+
+
+
++ Response 200 (application/json; charset=UTF-8)
+    + Headers
+
+            Access-Control-Expose-Headers : Seq
+            Seq : 1
+            Cha-Code: 0101100083
+    + Attributes (RspFormat)
+        + data (array, fixed)
+            + (object)
+                + proposalNo: 6102301030220170002084 (string, required) - 需要重新获得保单号的投保单号
+                + policyNo:0102301030220170004415 (string) - 保单号
+                + resCode:0 (string) - 单条保单号结果状态码
+                + resMsg:成功 (string) - 单条保单号结果信息
+
+
+## 北京身份证验证码发送 [/query-verification-message]
+
+###  北京身份证验证码发送[POST]
++ Request (application/json; charset=UTF-8)
+    + Headers
+
+            Seq : 1
+            Token : xxxx
+            Cha-Code: 0101100083
+    + Attributes
+        + proposalNo:0102301030220170004415 (string, required) - 投保单号`(优先商业险)`
+
++ Response 200 (application/json; charset=UTF-8)
+    + Headers
+
+            Access-Control-Expose-Headers : Seq
+            Seq : 1
+    + Attributes (RspFormat)
+        + data (object)
+            + proposalNo:0102301030220170004415 (string) - 投保单号
